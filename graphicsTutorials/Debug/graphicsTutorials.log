@@ -1,5 +1,4 @@
 ﻿  MainGame.cpp
 c:\users\nathan\documents\visual studio 2015\projects\graphicstutorials\graphicstutorials\maingame.cpp(202): warning C4805: '==': unsafe mix of type 'int' and type 'bool' in operation
-c:\users\nathan\documents\visual studio 2015\projects\graphicstutorials\graphicstutorials\maingame.cpp(513): warning C4715: 'MainGame::notFound': not all control paths return a value
   graphicsTutorials.vcxproj -> C:\Users\Nathan\Documents\Visual Studio 2015\Projects\graphicsTutorials\Debug\graphicsTutorials.exe
   graphicsTutorials.vcxproj -> C:\Users\Nathan\Documents\Visual Studio 2015\Projects\graphicsTutorials\Debug\graphicsTutorials.pdb (Partial PDB)

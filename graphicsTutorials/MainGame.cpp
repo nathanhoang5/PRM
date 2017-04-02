@@ -13,7 +13,7 @@
 using namespace std;
 
 //populate
-const int numNodes = 750;
+const int numNodes = 1000;
 int startX = 120;
 int startY = 130;
 int endX = 400;
@@ -70,7 +70,7 @@ public:
 	void setPriority(int pD)
 	{
 		mvCost(pD);
-		priority = 10*estimate() + level;
+		priority = estimate() + 10*level;
 	}
 
 	// give better priority to going strait instead of diagonally
@@ -158,16 +158,10 @@ MainGame::~MainGame()
 
 void MainGame::run() {
 	initSystems();
-	clock_t start = clock();
-	populate();
 	createObstacle();
-	connect();
-	query();
-	clock_t end = clock();
-	double time_elapsed = double(end - start);
-	cout << "Time to calculate the route (ms): " << time_elapsed << endl;
-	gameLoop();
-	
+	redrawSF();
+	cout << "Press space to populate map" << endl;
+	gameLoop();	
 }
 
 void MainGame::initSystems() {
@@ -196,17 +190,55 @@ void MainGame::gameLoop() {
 		//drawGame();
 	}
 }
+int counter = 0;
+clock_t start, i1, i2, i3, i4, endClock;
+bool stillRunning = true;
 void MainGame::processInput() {
 	SDL_Event evnt;
 	
+
+	
+
 	while (SDL_PollEvent(&evnt) == true) {
 		switch (evnt.type) {
 			case SDL_QUIT:
 				_gameState = GameState::EXIT;
 				break;
-			case SDL_MOUSEMOTION:
-				cout << evnt.motion.x << " " << evnt.motion.y << endl;
+			//case SDL_MOUSEMOTION:
+				//cout << evnt.motion.x << " " << evnt.motion.y << endl;
+			case SDL_KEYDOWN:
+				if (stillRunning) {
+					if (evnt.key.keysym.scancode == SDL_SCANCODE_SPACE) {
+						if (counter == 0) {
+							start = clock();
+							populate();
+							//populateTestMap();
+							createObstacle();
+							i1 = clock();
+							cout << "Press space to connect nodes" << endl;
+							counter = counter + 1;
 
+						}
+
+						else if (counter == 1) {
+							i2 = clock();
+							connect();
+							i3 = clock();
+							cout << "Press space to find path (A*)" << endl;
+							counter = counter + 1;
+						}
+						else if (counter == 2) {
+							counter = 0;
+							i4 = clock();
+							query();
+							endClock = clock();
+							double time_elapsed = double(i1 - start) + double(i3 - i2) + double(endClock - i4);
+							cout << "Time to calculate the route (ms): " << time_elapsed << endl;
+							stillRunning = false;
+							break;
+						}
+					}
+				}
 		}
 	}
 }
@@ -253,8 +285,8 @@ void MainGame::populate() {
 	SDL_Rect startRect;
 	startRect.h = nodeSize;
 	startRect.w = nodeSize;
-	startRect.x = startX;
-	startRect.y = startY;
+	startRect.x = startX-nodeSize/2;
+	startRect.y = startY-nodeSize/2;
 	SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
 	SDL_RenderFillRect(_renderer, &startRect);
 	
@@ -264,8 +296,8 @@ void MainGame::populate() {
 	SDL_Rect finRect;
 	finRect.h = nodeSize;
 	finRect.w = nodeSize;
-	finRect.x = endX;
-	finRect.y = endY;
+	finRect.x = endX-nodeSize/2;
+	finRect.y = endY-nodeSize/2;
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	SDL_RenderFillRect(_renderer, &finRect);
 	
@@ -282,8 +314,8 @@ void MainGame::populate() {
 		SDL_Rect nodeRect;
 		nodeRect.h = nodeSize;
 		nodeRect.w = nodeSize;
-		nodeRect.x = randX;
-		nodeRect.y = randY;
+		nodeRect.x = randX-nodeSize/2;
+		nodeRect.y = randY-nodeSize/2;
 		SDL_RenderFillRect(_renderer, &nodeRect);
 		//cout << "Node " << i << " at point (" << randX << "," << randY << ")" << endl;
 	}
@@ -295,6 +327,55 @@ void MainGame::populate() {
 
 	cout << "Populated nodes!" << endl;
 } 
+
+void MainGame::populateTestMap() {
+	static node* a;
+
+
+	//Starting point
+	nodeList[0] = new node(startX, startY, 0, 10000, 0);
+	nodeList[0]->initCArray();
+	nodeList[0]->setParent(-5);
+	SDL_Rect startRect;
+	startRect.h = nodeSize;
+	startRect.w = nodeSize;
+	startRect.x = startX - nodeSize / 2;
+	startRect.y = startY - nodeSize / 2;
+	SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
+	SDL_RenderFillRect(_renderer, &startRect);
+
+	//Finish point
+	nodeList[1] = new node(endX, endY, 0, 10000, 1);
+	nodeList[1]->initCArray();
+	SDL_Rect finRect;
+	finRect.h = nodeSize;
+	finRect.w = nodeSize;
+	finRect.x = endX - nodeSize / 2;
+	finRect.y = endY - nodeSize / 2;
+	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+	SDL_RenderFillRect(_renderer, &finRect);
+
+	SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
+
+	nodeList[2] = new node(129, 239, 0, 10000, 2);
+	nodeList[3] = new node(226, 244, 0, 10000, 3);
+	nodeList[4] = new node(314, 188, 0, 10000, 4);
+	nodeList[5] = new node(303, 247, 0, 10000, 5);
+	nodeList[6] = new node(456, 244, 0, 10000, 6);
+	nodeList[7] = new node(270, 208, 0, 10000, 7);
+
+	for (int i = 2; i < 8; i++) {
+		nodeList[i]->initCArray();
+		SDL_Rect nodeRect;
+		nodeRect.h = nodeSize;
+		nodeRect.w = nodeSize;
+		nodeRect.x = nodeList[i]->getxPos() - nodeSize / 2;
+		nodeRect.y = nodeList[i]->getyPos() - nodeSize / 2;
+		SDL_RenderFillRect(_renderer, &nodeRect);
+	
+	}
+
+}
 
 void MainGame::createObstacle() {
 	
@@ -400,8 +481,8 @@ void MainGame::redrawSF() {
 	SDL_Rect startRect;
 	startRect.h = nodeSize;
 	startRect.w = nodeSize;
-	startRect.x = startX;
-	startRect.y = startY;
+	startRect.x = startX-nodeSize/2;
+	startRect.y = startY - nodeSize / 2;
 	SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
 	SDL_RenderFillRect(_renderer, &startRect);
 
@@ -409,8 +490,8 @@ void MainGame::redrawSF() {
 	SDL_Rect finRect;
 	finRect.h = nodeSize;
 	finRect.w = nodeSize;
-	finRect.x = endX;
-	finRect.y = endY;
+	finRect.x = endX - nodeSize / 2;
+	finRect.y = endY - nodeSize / 2;
 	SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
 	SDL_RenderFillRect(_renderer, &finRect);
 
@@ -438,6 +519,13 @@ void MainGame::query() {
 	pq.push(*nodeList[0]);
 	//cout << pq.top().getArrayValue() << endl;
 	while (found == false) {
+
+		if (pq.size() == 0) {
+			cout<<"No path to end!"<<endl;
+			gameLoop();
+
+		
+		}
 		int i = pq.top().getArrayValue();
 		//cout << pq.top().getArrayValue() << endl;
 			for (int j = 0; j < numNodes; j++) {
@@ -463,14 +551,12 @@ void MainGame::query() {
 
 				}
 				else if ((!(cxn == -1)) && (notFound(cxn)==false)) {
-					/*nodeList[cxn]->setParent(i);
-					nodeList[cxn]->setPriority(getMoveDist(i, cxn));
-					pq.push(*nodeList[cxn]);
-					closedNodeList[closedCounter] = cxn;
-					closedCounter = closedCounter + 1;
-					cout << "Created node " << cxn << endl;
-					*/
-					//if(getMoveDist(cxn, ))
+					
+					if(getMoveDist(i, cxn)<nodeList[cxn]->getLevel()){
+						//cout << "yes" << endl;
+						nodeList[cxn]->setParent(i);
+						nodeList[cxn]->setPriority(getMoveDist(i, cxn));
+					}
 
 				}
  				else if(cxn == -1){
@@ -521,6 +607,8 @@ bool MainGame::notFound(int a) {
 		}
 	}
 
+	return true;
+
 }
 
 void MainGame::addNodes(int a) {
@@ -558,10 +646,11 @@ void MainGame::redrawFin() {
 		SDL_Rect nodeRect;
 		nodeRect.h = nodeSize;
 		nodeRect.w = nodeSize;
-		nodeRect.x = nodeList[i]->getxPos();
-		nodeRect.y = nodeList[i]->getyPos();
+		nodeRect.x = nodeList[i]->getxPos() - nodeSize / 2;
+		nodeRect.y = nodeList[i]->getyPos() - nodeSize / 2;
 		SDL_RenderFillRect(_renderer, &nodeRect);
 	}
 	redrawSF();
 	createObstacle();
 }
+

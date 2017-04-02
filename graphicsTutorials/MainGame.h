@@ -35,6 +35,7 @@ private:
 	void addNodes(int a);
 	void clearQueueList();
 	void redrawFin();
+	void populateTestMap();
 
 	SDL_Window* _window;
 	SDL_Renderer* _renderer;
