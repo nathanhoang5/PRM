@@ -19,7 +19,7 @@ private:
 	void initSystems();
 	void gameLoop();
 	void processInput();
-	void drawGame();
+	
 	void createObstacle();
 	void populate();
 	bool notObstructed( int x1, int y1, int x2, int y2);

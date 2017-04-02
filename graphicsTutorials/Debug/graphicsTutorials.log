@@ -1,4 +1,1 @@
-﻿  MainGame.cpp
-c:\users\nathan\documents\visual studio 2015\projects\graphicstutorials\graphicstutorials\maingame.cpp(202): warning C4805: '==': unsafe mix of type 'int' and type 'bool' in operation
-  graphicsTutorials.vcxproj -> C:\Users\Nathan\Documents\Visual Studio 2015\Projects\graphicsTutorials\Debug\graphicsTutorials.exe
-  graphicsTutorials.vcxproj -> C:\Users\Nathan\Documents\Visual Studio 2015\Projects\graphicsTutorials\Debug\graphicsTutorials.pdb (Partial PDB)
+﻿LINK : fatal error LNK1168: cannot open C:\Users\Nathan\Documents\Visual Studio 2015\Projects\graphicsTutorials\Debug\graphicsTutorials.exe for writing
