@@ -1,5 +1,7 @@
 ﻿  MainGame.cpp
-c:\users\nathan\documents\visual studio 2015\projects\graphicstutorials\graphicstutorials\maingame.cpp(209): warning C4805: '==': unsafe mix of type 'int' and type 'bool' in operation
-c:\users\nathan\documents\visual studio 2015\projects\graphicstutorials\graphicstutorials\maingame.cpp(598): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+c:\users\nathan\documents\visual studio 2015\projects\graphicstutorials\graphicstutorials\maingame.cpp(225): warning C4805: '==': unsafe mix of type 'int' and type 'bool' in operation
+c:\users\nathan\documents\visual studio 2015\projects\graphicstutorials\graphicstutorials\maingame.cpp(616): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+  Main.cpp
+  Generating Code...
   graphicsTutorials.vcxproj -> C:\Users\Nathan\Documents\Visual Studio 2015\Projects\graphicsTutorials\Debug\graphicsTutorials.exe
   graphicsTutorials.vcxproj -> C:\Users\Nathan\Documents\Visual Studio 2015\Projects\graphicsTutorials\Debug\graphicsTutorials.pdb (Partial PDB)
