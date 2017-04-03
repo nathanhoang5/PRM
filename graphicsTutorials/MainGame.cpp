@@ -13,14 +13,14 @@
 using namespace std;
 
 //populate
-const int numNodes = 12;
+const int numNodes = 2000;
 int startX = 120;
 int startY = 130;
 int endX = 400;
 int endY = 130;
-const int nodeSize = 5;
+const int nodeSize = 3;
 bool stillRunning = false;
-bool selectPts = false;
+bool selectPts = true;
 
 //create obstacles
 const int numObs = 3;
@@ -72,13 +72,13 @@ public:
 	void setPriority(int pD)
 	{
 		mvCost(pD);
-		priority = level;// estimate() + 10 * level;
+		priority = level;
 	}
 
 	// give better priority to going strait instead of diagonally
 	void mvCost(int i) // i: direction
 	{
-		level += i;
+		level = i;
 	}
 
 	// Estimation function for the remaining distance to the goal.
@@ -230,15 +230,15 @@ void MainGame::processInput() {
 					redrawSF();
 					cout << "Press space to populate map" << endl;
 				}
-			case SDL_MOUSEMOTION:
-				cout << evnt.motion.x << " " << evnt.motion.y << endl;
+			//case SDL_MOUSEMOTION:
+			//	cout << evnt.motion.x << " " << evnt.motion.y << endl;
 			case SDL_KEYDOWN:
 				if (stillRunning) {
 					if (evnt.key.keysym.scancode == SDL_SCANCODE_SPACE) {
 						if (counter == 0) {
 							start = clock();
-							//populate();
-							populateTestMap();
+							populate();
+							//populateTestMap();
 							createObstacle();
 							i1 = clock();
 							cout << "Press space to connect nodes" << endl;
@@ -260,9 +260,9 @@ void MainGame::processInput() {
 							endClock = clock();
 							double time_elapsed = double(i1 - start) + double(i3 - i2) + double(endClock - i4);
 							cout << "Time to calculate the route (ms): " << time_elapsed << endl;
-							cout << "To run again select start point" << endl;
+			
 							stillRunning = false;
-							selectPts = true;
+							selectPts = false;
 							break;
 						}
 					}
@@ -358,24 +358,23 @@ void MainGame::populateTestMap() {
 
 	SDL_SetRenderDrawColor(_renderer, 0, 0, 255, 255);
 
-	nodeList[2] = new node(391, 85, 0, 10000, 2);
-	nodeList[3] = new node(379,45, 0, 10000, 3);
-	nodeList[4] = new node(330, 42, 0, 10000, 4);
-	nodeList[5] = new node(284, 42, 0, 10000, 5);
-	nodeList[6] = new node(235, 42, 0, 10000, 6);
-	nodeList[7] = new node(187, 41, 0, 10000, 7);
-	nodeList[8] = new node(143, 42, 0, 10000, 8);
-	nodeList[9] = new node(137, 90, 0, 10000, 9);
-	nodeList[10] = new node(146, 56, 0, 10000, 10);
-	nodeList[11] = new node(169, 41, 0, 10000, 11);
-	/*
-	nodeList[12] = new node(392, 74, 0, 10000, 12);
-	nodeList[13] = new node(398, 88, 0, 10000, 13);
-	nodeList[14] = new node(409, 111, 0, 10000, 14);
-	nodeList[15] = new node(409, 120, 0, 10000, 15);
-	nodeList[16] = new node(133, 103, 0, 10000, 16);
-	nodeList[17] = new node(139, 78, 0, 10000, 17);
-	*/
+	nodeList[2] = new node(378, 86, 0, 10000, 2);
+	nodeList[3] = new node(388,47, 0, 10000, 3);
+	nodeList[4] = new node(377, 30, 0, 10000, 4);
+	nodeList[5] = new node(336, 14, 0, 10000, 5);
+	nodeList[6] = new node(324, 32, 0, 10000, 6);
+	nodeList[7] = new node(285, 10, 0, 10000, 7);
+	nodeList[8] = new node(273, 8, 0, 10000, 8);
+	nodeList[9] = new node(225, 11, 0, 10000, 9);
+	nodeList[10] = new node(190, 4, 0, 10000, 10);
+	nodeList[11] = new node(153, 21, 0, 10000, 11);
+	nodeList[12] = new node(105, 15, 0, 10000, 12);
+	nodeList[13] = new node(94, 46, 0, 10000, 13);
+	nodeList[14] = new node(90, 93, 0, 10000, 14);
+	nodeList[15] = new node(107, 100, 0, 10000, 15);
+	nodeList[16] = new node(120, 65, 0, 10000, 16);
+	nodeList[17] = new node(112, 25, 0, 10000, 17);
+	
 	for (int i = 2; i < numNodes; i++) {
 		nodeList[i]->initCArray();
 		SDL_Rect nodeRect;
@@ -573,7 +572,7 @@ void MainGame::query() {
 				}
 				else if ((!(cxn == -1)) && (notFound(cxn)==false)) {
 					
-					if(getMoveDist(i, cxn)<nodeList[i]->getLevel()){
+					if(getMoveDist(i, cxn)<nodeList[cxn]->getLevel()){
 						//cout << "yes" << endl;
 						nodeList[cxn]->setParent(i);
 						nodeList[cxn]->setPriority(getMoveDist(i, cxn));
@@ -602,6 +601,7 @@ int MainGame::getMoveDist(int a, int b) {
 }
 
 void MainGame::foundNode(int a) {
+ 
 	redrawFin();
 	int curNode = a;
 	SDL_SetRenderDrawColor(_renderer, 22, 204, 28, 255);
@@ -609,6 +609,7 @@ void MainGame::foundNode(int a) {
 	pathList += " ";
 	SDL_RenderDrawLine(_renderer, nodeList[curNode]->getxPos(), nodeList[curNode]->getyPos(), endX, endY);
 	while (!(nodeList[curNode]->getParent() == -5)) {
+		
 		pathList += to_string(nodeList[curNode]->getParent());
 		pathList += " ";
 		SDL_RenderDrawLine(_renderer, nodeList[curNode]->getxPos(), nodeList[curNode]->getyPos(), nodeList[nodeList[curNode]->getParent()]->getxPos(), nodeList[nodeList[curNode]->getParent()]->getyPos());
