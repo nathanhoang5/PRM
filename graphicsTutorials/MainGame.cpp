@@ -89,7 +89,7 @@ public:
 	void setPriority(int pD)
 	{
 		level = pD;
-		priority = level;
+		priority = level+estimate();
 	}
 
 	// Estimation function for the remaining distance to the goal (can be used in priority for A*)
